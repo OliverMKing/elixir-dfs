@@ -8,7 +8,8 @@ defmodule M do
       {7, 8, 9}
     }
 
-    answer = dfs(9, grid)
+    {search, _} = IO.gets("Enter a number from 1 to 9: ") |> Integer.parse()
+    answer = dfs(search, grid)
   end
 
   def neighbors(grid, point) do
