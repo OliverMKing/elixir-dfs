@@ -8,7 +8,7 @@ defmodule M do
       {7, 8, 9}
     }
 
-    answer = dfs(6, grid)
+    answer = dfs(9, grid)
   end
 
   def neighbors(grid, point) do
@@ -16,34 +16,34 @@ defmodule M do
     y = y(point)
     y_length = tuple_size(grid)
     x_length = tuple_size(elem(grid, 0))
-    neighborsLeft(x, y, x_length, y_length, [])
+    _neighborsLeft(x, y, x_length, y_length, [])
   end
 
-  def neighborsLeft(x, y, x_length, y_length, neighbors) do
+  def _neighborsLeft(x, y, x_length, y_length, neighbors) do
     if x > 0 do
-      neighborsRight(x, y, x_length, y_length, neighbors ++ [{x - 1, y}])
+      _neighborsRight(x, y, x_length, y_length, neighbors ++ [{x - 1, y}])
     else
-      neighborsRight(x, y, x_length, y_length, neighbors)
+      _neighborsRight(x, y, x_length, y_length, neighbors)
     end
   end
 
-  def neighborsRight(x, y, x_length, y_length, neighbors) do
+  def _neighborsRight(x, y, x_length, y_length, neighbors) do
     if x < x_length - 1 do
-      neighborsUp(x, y, x_length, y_length, neighbors ++ [{x + 1, y}])
+      _neighborsUp(x, y, x_length, y_length, neighbors ++ [{x + 1, y}])
     else
-      neighborsUp(x, y, x_length, y_length, neighbors)
+      _neighborsUp(x, y, x_length, y_length, neighbors)
     end
   end
 
-  def neighborsUp(x, y, x_length, y_length, neighbors) do
+  def _neighborsUp(x, y, x_length, y_length, neighbors) do
     if y > 0 do
-      neighborsDown(x, y, x_length, y_length, neighbors ++ [{x, y - 1}])
+      _neighborsDown(x, y, x_length, y_length, neighbors ++ [{x, y - 1}])
     else
-      neighborsDown(x, y, x_length, y_length, neighbors)
+      _neighborsDown(x, y, x_length, y_length, neighbors)
     end
   end
 
-  def neighborsDown(x, y, x_length, y_length, neighbors) do
+  def _neighborsDown(x, y, x_length, y_length, neighbors) do
     if y < y_length - 1 do
       neighbors ++ [{x, y + 1}]
     else
@@ -75,8 +75,16 @@ defmodule M do
           !MapSet.member?(visited, neighbor)
         end)
 
-      for neighbor <- unseen do
-        dfs(value, grid, visited, neighbor)
+      try do
+        for neighbor <- unseen do
+          case dfs(value, grid, visited, neighbor) do
+            {x, y} -> throw({x, y})
+            _ -> "Not solution"
+          end
+        end
+      catch
+        {x, y} -> {x, y}
+        _ -> "There was an error"
       end
     end
   end
